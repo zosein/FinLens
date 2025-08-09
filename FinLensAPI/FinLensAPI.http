@@ -1,0 +1,6 @@
+@FinLensAPI_HostAddress = http://localhost:5063
+
+GET {{FinLensAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
