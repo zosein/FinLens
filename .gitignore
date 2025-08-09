@@ -1,0 +1,54 @@
+# Visual Studio / .NET
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Dd]ebug/
+[Rr]elease/
+[Tt]est[Rr]esults/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# EF Core
+**/Migrations/**/__EFCore* 
+
+# Rider / VS Code
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs / temps
+*.log
+*.tlog
+*.tmp
+~$*
+
+# Publish
+publish/
+
+# Coverage
+coverage/
+*.coverage
+*.coveragexml
+
+# Other
+*.swp
