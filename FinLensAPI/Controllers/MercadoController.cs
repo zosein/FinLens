@@ -4,8 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinLensAPI.Data;
 using FinLensAPI.DTOs.MercadoDTO;
+using FinLensAPI.Interfaces;
 using FinLensAPI.Mapping;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinLensAPI.Controllers
 {
@@ -14,24 +17,27 @@ namespace FinLensAPI.Controllers
     public class MercadoController : ControllerBase
     {
         private readonly AppDBContext _context;
-        public MercadoController(AppDBContext context)
+        private readonly IMercadoRepository _mercadoRepo;
+        public MercadoController(AppDBContext context, IMercadoRepository mercadoRepo)
         {
+            _mercadoRepo = mercadoRepo;
             _context = context;
         }
 
         [HttpGet]
-        public IActionResult ObterTodos()
+        public async Task<IActionResult> ObterTodos()
         {
-            var mercados = _context.Mercados.ToList()
-            .Select(s => s.ToMercadoDTO());
+            var mercados = await _mercadoRepo.ObterTodosAsync();
+
+            var mercadoDto = mercados.Select(s => s.ToMercadoDTO());
 
             return Ok(mercados);
         }
 
         [HttpGet("{id}")]
-        public IActionResult ObterPorId([FromRoute] int id)
+        public async Task<IActionResult> ObterPorId([FromRoute] int id)
         {
-            var mercado = _context.Mercados.Find(id);
+            var mercado = await _mercadoRepo.ObterPorIdAsync(id);
 
             if (mercado == null)
             {
@@ -42,39 +48,43 @@ namespace FinLensAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] CreateMercadoRequestDTO mercadoDto)
+        public async Task<IActionResult> Create([FromBody] CreateMercadoRequestDTO mercadoDto)
         {
             var mercadoModel = mercadoDto.ToMercadoFromCreateDTO();
 
-            _context.Mercados.Add(mercadoModel);
-            _context.SaveChanges();
+            await _mercadoRepo.CreateAsync(mercadoModel);
 
             return CreatedAtAction(nameof(ObterPorId), new { id = mercadoModel.Id }, mercadoModel.ToMercadoDTO());
         }
 
         [HttpPut]
         [Route("{id}")]
-        public IActionResult Update([FromRoute] int id, [FromBody] UpdateMercadoRequestDTO updateDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateMercadoRequestDTO updateDto)
         {
-            var mercadoModel = _context.Mercados.FirstOrDefault(s => s.Id == id);
+            var mercadoModel = await _mercadoRepo.UpdateAsync(id, updateDto);
 
             if (mercadoModel == null)
             {
                 return NotFound();
             }
 
-            mercadoModel.Simbolo = updateDto.Simbolo;
-            mercadoModel.NomeEmpresa = updateDto.NomeEmpresa;
-            mercadoModel.PrecoCompra = updateDto.PrecoCompra;
-            mercadoModel.UltimoDividendo = updateDto.UltimoDividendo;
-            mercadoModel.Industria = updateDto.Industria;
-            mercadoModel.CapitalizacaoMercado = updateDto.CapitalizacaoMercado;
-
-            _context.SaveChanges();
-
             return Ok(mercadoModel.ToMercadoDTO());
         }
 
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            var mercadoModel = await _mercadoRepo.DeleteAsync(id);
+
+            if (mercadoModel == null)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+
+        }
 
     }
 }
