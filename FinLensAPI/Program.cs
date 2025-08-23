@@ -17,6 +17,7 @@ builder.Services.AddDbContext<AppDBContext>(options =>
 });
 
 builder.Services.AddScoped<IMercadoRepository, MercadoRepository>();
+builder.Services.AddScoped<IComentarioRepository, ComentarioRepository>();
 
 var app = builder.Build();
 
