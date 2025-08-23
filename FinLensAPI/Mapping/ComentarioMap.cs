@@ -1,12 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using FinLensAPI.DTOs.ComentarioDTO;
+using FinLensAPI.Models;
 
 namespace FinLensAPI.Mapping
 {
-    public class ComentarioMap
+    public static class ComentarioMap
     {
-        
+        public static ComentarioDTO ToComentarioDTO(this Comentario comentarioModel)
+        {
+            return new ComentarioDTO
+            {
+                Id = comentarioModel.Id,
+                Titulo = comentarioModel.Titulo,
+                Conteudo = comentarioModel.Conteudo,
+                CriadoEm = comentarioModel.CriadoEm,
+                MercadoId = comentarioModel.MercadoId
+            };
+        }
     }
 }
